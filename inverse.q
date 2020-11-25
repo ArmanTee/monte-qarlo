@@ -56,7 +56,6 @@
                 ))
     };
 
-.qp.go[500;500] .qp.line[t;`x;`fx;::]
 // functions
 
 .sp.inv:{[fn;n]
