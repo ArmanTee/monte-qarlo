@@ -1,6 +1,32 @@
-system"pwd"
-\l mcutils.q
-\l mcplot.q
+
+// Constants 
+.mc.pi:acos -1;
+
+
+
+// Utils
+.mc.utils.linspace:{[s;e;n]
+    n:n-1;
+    `float$+[%[e-s;n]]\[n;s]
+    };
+/ Probability of outcome x within y and z
+.mc.util.spInt:{(count where x within(y;z))%count[x]};
+
+.mc.util.spIntInv:{[x;y;p]
+   x where d=min abs d:p-.mc.util.spInt[x;y;] each x: asc x;
+    };    
+    
+.mc.util.symInv:{ 
+    n: (floor count[x]%2) cut m:.mc.norm.fn[sdev x;avg x;] x:asc x;
+    if[3~ count n; n:(n[0];n[1],n[2])];
+     x where m in  raze n ./:  0 1,' where each abs[d]=' min each abs d: n - y
+    };
+
+// Uniform Distribution
+.mc.uni.sp:{[s;e;n]
+        s+n?"f"$e-s
+    };
+
 // Inverse Sampling
 .mc.inv:{[fn;n]
             fn n?1.
@@ -10,7 +36,7 @@ system"pwd"
 .mc.norm.bxml:{[n;s;m]
     u1:(c:ceiling[n%2])?1.;
     u2:c?1.;
-    m+s*n#(sqrt[-2*log(u1)]*cos[2*.mc.pi*u2]),sqrt[-2*log(u2)]*sin[2*.mc.pi*u1]
+    m+s*n#(sqrt[-2*log(u1)]*cos 2*.mc.pi*u2),sqrt[-2*log(u2)]*sin 2*.mc.pi*u1
     };
 
 
@@ -22,7 +48,7 @@ system"pwd"
 // REJECTION
 /internal
 .mc.i.rejsp:{[n;m;h;fn;s;e;x] 
-    x,y where(fn y:s+n?"f"$e)>n?m*h
+    x,y where(fn y:s+n?"f"$e-s)>n?m*h
     };
 
 .mc.rej.sph:{[fn;n;s;e;h;m]
@@ -60,38 +86,14 @@ system"pwd"
     /o - options dictionary `std`g`s!(1b/0b; custom g[x]; samples from g[x])
     if[0b~o;o:()!()];
     o:(``std`g`s!raze(::;3#0b)),o;
-    if[(0> type o.s)<>100>type o.g; 0N!"ERROR - Incorrect g/o arguments supplied";:()];
+    if[(0> type o[`s])<>100>type o[`g]; 0N!"ERROR - Incorrect g/o arguments supplied";:()];
     if[0b~o`g;
-            o.s:.mc.norm.bxml[n;1;0];
-            o.g:.mc.norm.fn[1;0;]
+            o[`s]:.mc.norm.bxml[n;1;0];
+            o[`g]:.mc.norm.fn[1;0;]
         ];
-    o[`avg`sderr]:.mc.i.impCalcNorm[o.s;f;o.g;h];
+    o[`avg`sderr]:.mc.i.impCalcNorm[o`s;f;o`g;h];
     if[o`std;
-        o[`std]: sqrt first[.mc.i.impCalcNorm[o.s;f;o.g;{y[x] xexp 2}[;h]]] - xexp[o`avg; 2 ]
+        o[`std]: sqrt first[.mc.i.impCalcNorm[o`s;f;o`g;{y[x] xexp 2}[;h]]] - xexp[o`avg; 2 ]
         ];
-    o    
-    }
-    
-// Script
-
-/ 
-// Commands
-expF:{(1%y)*exp neg[x]%y};
-expF2:expF[;2];
-invExpF:{neg[y]*log[1-x]};
-invExpF2:invExpF[;2];
-
-.mc.plot.fitHist.go[.mc.inv[invExpF2;10000]; expF2;0.1;1b;`small]
-.mc.plot.fitHist.go[.mc.rej.sph[fn;n;0;50;0b;m]; expF2;0.1;1b;`small]
-.mc.rej.sph[expF2;n;0;500;0b;0b]
-n:120000
-lin:{(1%40)*3+2*x};
-Finv:{0.5*(-3+sqrt[9+(160*x)])};
-avg .mc.inv[Finv;100000000];
-
-avg a*lin a:.mc.utils.linspace[0;5;10000000]
-
-/.mc.plot.fitHist.go[.mc.inv[Finv;n]; lin;0.1;1b;`small]
-
-/.mc.plot.fitHist.go[.mc.rej.sph[fn;n;s;e;0b;m]; lin;0.1;1b;`small]
-\
+    `s`g _ o
+    };

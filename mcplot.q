@@ -6,12 +6,12 @@
     s:sdev x;
     m:avg x;
     k:count x;
-    t: ([] x: .mc.utils.linspace[m-3*s;m+3*s;1000]);
+    t: ([] x: .mc.utils.linspace[m-5*s;m+5*s;1000]);
     t: update fx: .mc.norm.fn[s;m;] x from t;
     t2:([] y: x);
     ($[file;.qp.png[filename];.qp.go] . $[size~`large;(1000;1000);size~`medium; (750;750);(500;500)]) 
           (
-          $[ti;.qp.title["Histogram with fit of density function: ",string[m], " Standard Deviation: ",string[s]] ;(),]
+          $[ti;.qp.title["Histogram with Gaussian Fit,  Mean: ",string[m], " Standard Deviation: ",string[s]] ;(),]
             .qp.stack(
                     .qp.histogram[t2;`y;]
                          .qp.s.aggr[.st.a.custom[`count__; `y; {[x;k;w] count[x]%w*k}[;k;w]]],
@@ -40,7 +40,7 @@
     t2:([] y: x);
     ($[file;.qp.png[filename];.qp.go] . $[size~`large;(1000;1000);size~`medium; (750;750);(500;500)]) 
           (
-          $[ti;.qp.title["Gaussian Fit with Mean: ",string[m], " Standard Deviation: ",string[s]] ;(),]
+          $[ti;.qp.title["Histogram Density with Fit, Mean: ",string[m], " Standard Deviation: ",string[s]] ;(),]
             .qp.stack(
                     .qp.histogram[t2;`y;]
                          .qp.s.aggr[.st.a.custom[`count__; `y; {[x;k;w] count[x]%w*k}[;k;w]]],
