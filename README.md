@@ -1,6 +1,7 @@
 # kdb-sampling
+monte-qarlo 0.1: Work in progress.
 
-Work in progress.
+
 Usage:
 
 - load mc.q and mcplot.q directly e.g \l dir/mc.q
