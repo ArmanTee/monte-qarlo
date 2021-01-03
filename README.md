@@ -1,9 +1,8 @@
 # kdb-sampling
 
-Work in progress...
-
+Work in progress.
 Usage:
 
-load mc.q directly.
+- load mc.q and mcplot.q directly e.g \l dir/mc.q
 
-mcplot.q requires the ggplot analyst libraries preloaded
+- mcplot.q is a set of wrapper function for Kx Developer ggplot library, can be optionally loaded in for visualisation. 
